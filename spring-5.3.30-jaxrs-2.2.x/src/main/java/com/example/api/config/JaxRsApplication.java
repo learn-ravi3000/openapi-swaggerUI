@@ -31,7 +31,7 @@ import java.util.Set;
     servers = {
         @Server(
             description = "Development Server",
-            url = "http://localhost:8080/your-app-name"
+            url = "http://localhost:8080/jaxrs-swagger-demo-1.0"
         ),
         @Server(
             description = "Production Server",

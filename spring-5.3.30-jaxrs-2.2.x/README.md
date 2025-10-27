@@ -148,17 +148,17 @@ public class User {
 mvn clean package
 
 # Deploy to Tomcat
-# Copy target/your-app-name.war to $TOMCAT_HOME/webapps/
+# Copy target/jaxrs-swagger-demo-1.0.war to $TOMCAT_HOME/webapps/
 ```
 
 ## 🌐 Access Your Documentation
 
 After deployment to Tomcat, access:
 
-- **Swagger UI**: `http://localhost:8080/your-app-name/swagger-ui/`
-- **OpenAPI JSON**: `http://localhost:8080/your-app-name/api/openapi.json`
-- **OpenAPI YAML**: `http://localhost:8080/your-app-name/api/openapi.yaml`
-- **Your REST API**: `http://localhost:8080/your-app-name/api/users`
+- **Swagger UI**: `http://localhost:8080/jaxrs-swagger-demo-1.0/swagger-ui/`
+- **OpenAPI JSON**: `http://localhost:8080/jaxrs-swagger-demo-1.0/api/openapi.json`
+- **OpenAPI YAML**: `http://localhost:8080/jaxrs-swagger-demo-1.0/api/openapi.yaml`
+- **Your REST API**: `http://localhost:8080/jaxrs-swagger-demo-1.0/api/users`
 
 ## 📝 Key Swagger Annotations
 
