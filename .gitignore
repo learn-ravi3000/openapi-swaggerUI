@@ -1,0 +1,5 @@
+openapi-swaggerUI-workspace.code-workspace
+*.jar
+*.class
+*.war
+target/
