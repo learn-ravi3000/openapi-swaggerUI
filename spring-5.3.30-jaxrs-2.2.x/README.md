@@ -270,13 +270,9 @@ your-project/
         │       │   └── JaxRsApplication.java
         │       ├── resource/
         │       │   ├── UserResource.java
-        │       │   ├── ProductResource.java
-        │       │   └── OrderResource.java
-        │       ├── model/
+       │       ├── model/
         │       │   ├── User.java
-        │       │   ├── Product.java
-        │       │   └── Order.java
-        │       └── servlet/
+      │       └── servlet/
         │           └── SwaggerUIServlet.java
         ├── resources/
         │   └── applicationContext.xml
@@ -285,75 +281,7 @@ your-project/
                 └── web.xml
 ```
 
-## 🔧 Troubleshooting
 
-### Issue: 404 on Swagger UI
 
-**Check:**
-- Webjars dependency is in pom.xml
-- SwaggerUIServlet is properly mapped in web.xml
-- Servlet class name matches your package structure
 
-### Issue: OpenAPI spec not found
 
-**Check:**
-- `OpenApiResource.class` is registered in JaxRsApplication
-- Jersey package scanning includes `io.swagger.v3.jaxrs2.integration.resources`
-- Jersey servlet is properly configured in web.xml
-
-### Issue: Empty documentation
-
-**Check:**
-- Your resource classes have Swagger annotations
-- Resources are registered in JaxRsApplication.getClasses()
-- Package scanning is configured correctly
-
-### Issue: Compilation errors
-
-**Check:**
-- All imports are correct
-- Package names match your project structure
-- Maven dependencies are downloaded (run `mvn clean install`)
-
-## 💡 Best Practices
-
-1. **Be descriptive**: Write clear summaries and descriptions
-2. **Document all responses**: Include success and error cases
-3. **Use examples**: Provide example values for parameters and fields
-4. **Group endpoints**: Use `@Tag` to organize related operations
-5. **Keep it updated**: Update documentation when you change APIs
-6. **Test regularly**: Check Swagger UI after making changes
-
-## 📚 Additional Resources
-
-- [OpenAPI Specification](https://swagger.io/specification/)
-- [Swagger Core Documentation](https://github.com/swagger-api/swagger-core)
-- [JAX-RS Annotations](https://github.com/swagger-api/swagger-core/wiki/Swagger-2.X---Annotations)
-- [Jersey Documentation](https://eclipse-ee4j.github.io/jersey/)
-
-## 🆘 Need Help?
-
-Common issues and solutions:
-1. **Package names**: Ensure all package references are updated
-2. **Maven build**: Run `mvn clean install` to fetch dependencies
-3. **Tomcat logs**: Check catalina.out for error messages
-4. **Browser cache**: Clear cache if Swagger UI doesn't update
-5. **CORS issues**: May need CORS filter if accessing from different domain
-
-## ✅ Quick Checklist
-
-- [ ] Updated pom.xml with Swagger dependencies
-- [ ] Created JaxRsApplication.java with API metadata
-- [ ] Added SwaggerUIServlet.java
-- [ ] Updated web.xml with servlet configurations
-- [ ] Added Swagger annotations to REST resources
-- [ ] Added schema annotations to model classes
-- [ ] Updated all package names to match your project
-- [ ] Built project successfully (`mvn clean package`)
-- [ ] Deployed WAR to Tomcat
-- [ ] Accessed Swagger UI successfully
-- [ ] Tested API endpoints through Swagger UI
-
----
-
-**Remember**: The `UserResource.java` and `User.java` files are **examples**. Use them as templates for annotating your existing code. Your business logic remains unchanged - you're only adding documentation!
