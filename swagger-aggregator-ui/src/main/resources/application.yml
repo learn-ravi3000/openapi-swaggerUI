@@ -1,11 +1,17 @@
 server:
   port: 8081
 
+aggregator:
+  services:
+    - id: service-1
+      name: Service 1
+      url: http://localhost:8082/jaxrs-swagger-demo-1.0/api/openapi.json
+
 springdoc:
   swagger-ui:
+    disable-swagger-default-url: true
     urls:
       - name: Service 1
-        url: http://localhost:8082/jaxrs-swagger-demo-1.0/api/openapi.json
-
+        url: /aggregated/service-1
     urls-primary-name: Service 1
 
