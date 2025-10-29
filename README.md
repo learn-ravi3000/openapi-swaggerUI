@@ -1,5 +1,6 @@
 #Centralized REST API documenation using SpringDoc's built-in multi-service aggregation, which fetches API from different technologies 
 
+```
 ┌─────────────────────────────────────────────────┐
 │   Centralized Documentation Portal             │
 │   https://api.company.com/docs                  │
@@ -22,3 +23,4 @@
 │/v3/api- │     │/openapi  │   │/openapi │  │/openapi │
 │docs     │     │          │   │         │  │         │
 └─────────┘     └──────────┘   └─────────┘  └─────────┘
+```
