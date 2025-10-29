@@ -1,6 +1,8 @@
 # JAX-RS + Swagger Core Implementation Guide
 
 Complete solution for adding Swagger/OpenAPI documentation to your JAX-RS application.
+If you consume this service through the companion Swagger Aggregator UI (`swagger-aggregator-ui` module), that application proxies your OpenAPI document so browsers never call this app directly.
+Keep the provided `CorsFilter` when exposing the API to browser clients on another origin; you can skip it when the aggregator is the only consumer.
 
 ## 📋 Files Included
 
@@ -11,6 +13,7 @@ Complete solution for adding Swagger/OpenAPI documentation to your JAX-RS applic
 | **UserResource.java** | `src/main/java/com/example/api/resource/` | Example REST resource |
 | **User.java** | `src/main/java/com/example/api/model/` | Example model |
 | **SwaggerUIServlet.java** | `src/main/java/com/example/api/servlet/` | Serves Swagger UI |
+| **CorsFilter.java** | `src/main/java/com/example/api/config/` | Adds `Access-Control-Allow-*` headers for direct browser access (optional behind aggregator) |
 | **web.xml** | `src/main/webapp/WEB-INF/` | Web application configuration |
 | **applicationContext.xml** | `src/main/resources/` | Spring configuration (optional) |
 
@@ -159,6 +162,28 @@ After deployment to Tomcat, access:
 - **OpenAPI JSON**: `http://localhost:8080/jaxrs-swagger-demo-1.0/api/openapi.json`
 - **OpenAPI YAML**: `http://localhost:8080/jaxrs-swagger-demo-1.0/api/openapi.yaml`
 - **Your REST API**: `http://localhost:8080/jaxrs-swagger-demo-1.0/api/users`
+## ?? Using This Service with the Swagger Aggregator UI
+
+The `swagger-aggregator-ui` module proxies OpenAPI definitions so the browser only talks to `http://localhost:8081`. To surface this JAX-RS service inside the aggregator:
+
+1. Deploy this WAR to Tomcat (default context path `jaxrs-swagger-demo-1.0`) on port `8082`.
+2. In the aggregator's `application.yml`, add:
+   ```yaml
+   aggregator:
+     services:
+       - id: jaxrs-demo
+         name: JAX-RS Demo
+         url: http://localhost:8082/jaxrs-swagger-demo-1.0/api/openapi.json
+
+   springdoc:
+     swagger-ui:
+       urls:
+         - name: JAX-RS Demo
+           url: /aggregated/jaxrs-demo
+   ```
+3. Restart the aggregator and browse `http://localhost:8081/swagger-ui/index.html`.
+
+Because the aggregator fetches the OpenAPI document server-side, CORS headers from this application are only necessary when browsers call it directly. You can keep `CorsFilter` enabled for backwards compatibility or remove it for aggregator-only deployments.
 
 ## 📝 Key Swagger Annotations
 
@@ -280,7 +305,6 @@ your-project/
             └── WEB-INF/
                 └── web.xml
 ```
-
 
 
 
