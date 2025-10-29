@@ -1,0 +1,11 @@
+server:
+  port: 8081
+
+springdoc:
+  swagger-ui:
+    urls:
+      - name: Service 1
+        url: http://localhost:8082/jaxrs-swagger-demo-1.0/api/openapi.json
+
+    urls-primary-name: Service 1
+
