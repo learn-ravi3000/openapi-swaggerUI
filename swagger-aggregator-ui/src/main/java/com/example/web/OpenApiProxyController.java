@@ -1,65 +1,55 @@
 package com.example.web;
 
-import com.example.config.AggregatorProperties;
-import com.example.config.AggregatorProperties.ServiceDefinition;
-import java.time.Duration;
-import java.util.Optional;
-import org.springframework.boot.web.client.RestTemplateBuilder;
+import com.example.service.OpenApiSpecService;
+import com.example.service.model.SpecResult;
+import com.example.service.model.UpstreamUnavailableException;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
-import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
-import org.springframework.web.client.RestClientException;
-import org.springframework.web.client.RestTemplate;
 import org.springframework.web.server.ResponseStatusException;
 
+/**
+ * Exposes aggregated OpenAPI documents to Swagger UI consumers via consistent IDs.
+ */
 @RestController
 @RequestMapping("/aggregated")
 public class OpenApiProxyController {
 
-    private final AggregatorProperties properties;
-    private final RestTemplate restTemplate;
+    private final OpenApiSpecService specService;
 
-    public OpenApiProxyController(
-            AggregatorProperties properties,
-            RestTemplateBuilder restTemplateBuilder) {
-        this.properties = properties;
-        this.restTemplate = restTemplateBuilder
-                .setConnectTimeout(Duration.ofSeconds(5))
-                .setReadTimeout(Duration.ofSeconds(15))
-                .build();
+    public OpenApiProxyController(OpenApiSpecService specService) {
+        this.specService = specService;
     }
 
-    @GetMapping(value = "/{serviceId}")
+    @GetMapping("/{serviceId}")
     public ResponseEntity<String> fetchOpenApi(@PathVariable String serviceId) {
-        ServiceDefinition service = locateService(serviceId);
+        SpecResult result;
         try {
-            ResponseEntity<String> response = restTemplate.getForEntity(service.getUrl(), String.class);
-            MediaType contentType = Optional.ofNullable(response.getHeaders().getContentType())
-                    .filter(mediaType -> mediaType.isCompatibleWith(MediaType.APPLICATION_JSON)
-                            || mediaType.isCompatibleWith(MediaType.APPLICATION_PROBLEM_JSON)
-                            || mediaType.getSubtype().contains("yaml"))
-                    .orElse(MediaType.APPLICATION_JSON);
-
-            HttpHeaders headers = new HttpHeaders();
-            headers.setContentType(contentType);
-            return new ResponseEntity<>(response.getBody(), headers, response.getStatusCode());
-        } catch (RestClientException ex) {
+            result = specService.getSpec(serviceId);
+        } catch (IllegalArgumentException ex) {
+            throw new ResponseStatusException(HttpStatus.NOT_FOUND, ex.getMessage(), ex);
+        } catch (UpstreamUnavailableException ex) {
             throw new ResponseStatusException(
-                    HttpStatus.BAD_GATEWAY,
-                    "Failed to fetch OpenAPI definition from " + service.getUrl(),
+                    HttpStatus.SERVICE_UNAVAILABLE,
+                    "Failed to fetch OpenAPI definition for '" + ex.getService().getId() + "'",
                     ex);
         }
-    }
 
-    private ServiceDefinition locateService(String serviceId) {
-        return properties.findById(serviceId)
-                .orElseThrow(() -> new ResponseStatusException(
-                        HttpStatus.NOT_FOUND,
-                        "Unknown service '" + serviceId + "'"));
+        HttpHeaders headers = new HttpHeaders();
+        headers.setContentType(result.getMediaType());
+        headers.add("X-Aggregator-Cache", result.isFromCache() ? (result.isStale() ? "STALE" : "HIT") : "MISS");
+        if (result.isStale()) {
+            headers.add(
+                    HttpHeaders.WARNING,
+                    "110 swagger-aggregator \"Serving cached spec; upstream unreachable\"");
+        }
+        return ResponseEntity
+                .status(result.getStatus())
+                .headers(headers)
+                .body(result.getBody());
     }
 }
