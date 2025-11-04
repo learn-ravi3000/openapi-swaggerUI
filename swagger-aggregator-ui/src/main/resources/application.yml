@@ -5,6 +5,7 @@ aggregator:
   catalog-location: classpath:/services.yml
   cache-ttl: 30s
   health-check-interval: 30s
+  try-it-out-enabled: true
 
 springdoc:
   swagger-ui:

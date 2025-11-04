@@ -36,6 +36,8 @@ public class AggregatorProperties {
     @Valid
     private List<ServiceDefinition> services = new ArrayList<>();
 
+    private boolean tryItOutEnabled = true;
+
     public String getCatalogLocation() {
         return catalogLocation;
     }
@@ -74,6 +76,14 @@ public class AggregatorProperties {
 
     public Optional<ServiceDefinition> findById(String id) {
         return services.stream().filter(service -> service.getId().equals(id)).findFirst();
+    }
+
+    public boolean isTryItOutEnabled() {
+        return tryItOutEnabled;
+    }
+
+    public void setTryItOutEnabled(boolean tryItOutEnabled) {
+        this.tryItOutEnabled = tryItOutEnabled;
     }
 
     public static class ServiceDefinition {

@@ -61,7 +61,8 @@ public class SwaggerConfigController {
         }
 
         String primaryName = urls.isEmpty() ? null : urls.get(0).name();
-        return new SwaggerConfigResponse(urls, primaryName, properties.getCacheTtl(), health);
+        return new SwaggerConfigResponse(
+                urls, primaryName, properties.getCacheTtl(), health, properties.isTryItOutEnabled());
     }
 
     @GetMapping(value = "/aggregated/health", produces = MediaType.APPLICATION_JSON_VALUE)
@@ -79,7 +80,8 @@ public class SwaggerConfigController {
             List<ServiceEntry> urls,
             String urlsPrimaryName,
             Duration cacheTtl,
-            Map<String, HealthEntry> health) {
+            Map<String, HealthEntry> health,
+            boolean tryItOutEnabled) {
     }
 
     public record ServiceEntry(
